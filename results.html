@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Results</h2>
+        <div id="resultsContainer">
+            <!-- Results will be displayed here -->
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const userData = {
+                name: localStorage.getItem('name'),
+                email: localStorage.getItem('email'),
+                linguistic: localStorage.getItem('linguistic'),
+                logicalMathematical: localStorage.getItem('logicalMathematical'),
+                spatial: localStorage.getItem('spatial'),
+                bodilyKinesthetic: localStorage.getItem('bodilyKinesthetic'),
+                musical: localStorage.getItem('musical'),
+                interpersonal: localStorage.getItem('interpersonal'),
+                intrapersonal: localStorage.getItem('intrapersonal'),
+                naturalist: localStorage.getItem('naturalist'),
+                extraversion: localStorage.getItem('extraversion'),
+                agreeableness: localStorage.getItem('agreeableness'),
+                conscientiousness: localStorage.getItem('conscientiousness'),
+                emotionalStability: localStorage.getItem('emotionalStability'),
+                openness: localStorage.getItem('openness')
+            };
+
+            for (const key in userData) {
+                if (userData[key]) {
+                    const resultItem = document.createElement('p');
+                    resultItem.innerHTML = `<strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${userData[key]}%`;
+                    resultsContainer.appendChild(resultItem);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
