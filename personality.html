@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Personality Test</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            max-height: 90vh;
+            overflow-y: scroll;
+            width: 80%;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Personality Test</h2>
+        <form id="personalityForm">
+            <div id="questionsContainer"></div>
+            <button type="submit">Submit Test</button>
+        </form>
+    </div>
+    <script>
+        const questions = [
+            // Add the personality questions here
+            { trait: 'Extraversion', question: 'I enjoy being the center of attention.' },
+            { trait: 'Agreeableness', question: 'I am interested in people.' },
+            { trait: 'Conscientiousness', question: 'I am always prepared.' },
+            { trait: 'Emotional Stability', question: 'I get upset easily.' },
+            { trait: 'Openness to Experience', question: 'I have a rich vocabulary.' },
+            // Add remaining questions...
+        ];
+
+        const questionsContainer = document.getElementById('questionsContainer');
+        questions.forEach((q, index) => {
+            const questionEl = document.createElement('div');
+            questionEl.className = 'question';
+            questionEl.innerHTML = `
+                <p>${index + 1}. ${q.question}</p>
+                <label><input type="radio" name="q${index}" value="1" required> 1</label>
+                <label><input type="radio" name="q${index}" value="2"> 2</label>
+                <label><input type="radio" name="q${index}" value="3"> 3</label>
+                <label><input type="radio" name="q${index}" value="4"> 4</label>
+                <label><input type="radio" name="q${index}" value="5"> 5</label>
+            `;
+            questionsContainer.appendChild(questionEl);
+        });
+
+        document.getElementById('personalityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const responses = {};
+            questions.forEach((q, index) => {
+                responses[q.trait] = responses[q.trait] || [];
+                responses[q.trait].push(parseInt(document.querySelector(`input[name="q${index}"]:checked`).value));
+            });
+
+            const results = {};
+            for (const trait in responses) {
+                const sum = responses[trait].reduce((a, b) => a + b, 0);
+                results[trait.toLowerCase().replace(/ /g, '')] = ((sum / (responses[trait].length * 5)) * 100).toFixed(2);
+            }
+
+            const userData = {
+                name: localStorage.getItem('name'),
+                email: localStorage.getItem('email'),
+                ...results
+            };
+
+            fetch('https://script.google.com/macros/s/AKfycbz8bKrhVIToCc-HvPuh7PMjJe0mZRX_gs0AbVhpAMk5EbXbeSwqlFkdRc2OMZaqmZ6yxA/exec', {
+                method: 'POST',
+                body: JSON.stringify(userData)
+            }).then(response => response.json())
+              .then(data => {
+                  alert('Personality test submitted successfully!');
+                  window.location.href = 'results.html';
+              })
+              .catch(error => console.error('Error submitting test:', error));
+        });
+    </script>
+</body>
+</html>
