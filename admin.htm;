@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Page</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            width: 90%;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>User Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Linguistic</th>
+                    <th>Logical-Mathematical</th>
+                    <th>Spatial</th>
+                    <th>Bodily-Kinesthetic</th>
+                    <th>Musical</th>
+                    <th>Interpersonal</th>
+                    <th>Intrapersonal</th>
+                    <th>Naturalist</th>
+                    <th>Extraversion</th>
+                    <th>Agreeableness</th>
+                    <th>Conscientiousness</th>
+                    <th>Emotional Stability</th>
+                    <th>Openness to Experience</th>
+                </tr>
+            </thead>
+            <tbody id="resultsTable">
+                <!-- Data will be added here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('https://script.google.com/macros/s/AKfycbz8bKrhVIToCc-HvPuh7PMjJe0mZRX_gs0AbVhpAMk5EbXbeSwqlFkdRc2OMZaqmZ6yxA/exec')
+                .then(response => response.json())
+                .then(data => {
+                    const resultsTable = document.getElementById('resultsTable');
+                    data.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.linguistic}</td>
+                            <td>${user.logicalMathematical}</td>
+                            <td>${user.spatial}</td>
+                            <td>${user.bodilyKinesthetic}</td>
+                            <td>${user.musical}</td>
+                            <td>${user.interpersonal}</td>
+                            <td>${user.intrapersonal}</td>
+                            <td>${user.naturalist}</td>
+                            <td>${user.extraversion}</td>
+                            <td>${user.agreeableness}</td>
+                            <td>${user.conscientiousness}</td>
+                            <td>${user.emotionalStability}</td>
+                            <td>${user.openness}</td>
+                        `;
+                        resultsTable.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+</body>
+</html>
