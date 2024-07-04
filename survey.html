@@ -1,93 +1,59 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Intelligence Survey</title>
-    <style>
-        /* Basic styles */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .container {
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            max-height: 90vh;
-            overflow-y: scroll;
-            width: 80%;
-        }
-        .question {
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Intelligence Survey</h2>
-        <form id="surveyForm">
-            <div id="questionsContainer"></div>
-            <button type="submit">Submit Survey</button>
-        </form>
-    </div>
-    <script>
-        const questions = [
-            // Add the 54 questions here, categorized by intelligence type
-            { category: 'Linguistic', question: 'I enjoy playing with words, like doing crossword puzzles or playing word games.' },
-            { category: 'Logical-Mathematical', question: 'I easily understand how to solve math problems.' },
-            { category: 'Spatial', question: 'I am good at reading maps and finding my way around.' },
-            // Add all other questions from the site...
-        ];
+<script>
+    const questions = [
+        { category: 'Linguistic', question: 'I enjoy playing with words, like doing crossword puzzles or playing word games.' },
+        { category: 'Logical-Mathematical', question: 'I easily understand how to solve math problems.' },
+        { category: 'Spatial', question: 'I am good at reading maps and finding my way around.' },
+        { category: 'Bodily-Kinesthetic', question: 'I enjoy physical activities like sports or dance.' },
+        { category: 'Musical', question: 'I can easily identify different musical instruments in a piece of music.' },
+        { category: 'Interpersonal', question: 'I am good at understanding other people\'s feelings and motivations.' },
+        { category: 'Intrapersonal', question: 'I have a clear understanding of my strengths and weaknesses.' },
+        { category: 'Naturalist', question: 'I enjoy spending time in nature and observing wildlife.' },
+        // Add remaining questions...
+    ];
 
-        const questionsContainer = document.getElementById('questionsContainer');
+    const questionsContainer = document.getElementById('questionsContainer');
+    questions.forEach((q, index) => {
+        const questionEl = document.createElement('div');
+        questionEl.className = 'question';
+        questionEl.innerHTML = `
+            <p>${index + 1}. ${q.question}</p>
+            <label><input type="radio" name="q${index}" value="1" required> 1</label>
+            <label><input type="radio" name="q${index}" value="2"> 2</label>
+            <label><input type="radio" name="q${index}" value="3"> 3</label>
+            <label><input type="radio" name="q${index}" value="4"> 4</label>
+            <label><input type="radio" name="q${index}" value="5"> 5</label>
+        `;
+        questionsContainer.appendChild(questionEl);
+    });
+
+    document.getElementById('surveyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const responses = {};
         questions.forEach((q, index) => {
-            const questionEl = document.createElement('div');
-            questionEl.className = 'question';
-            questionEl.innerHTML = `
-                <p>${index + 1}. ${q.question}</p>
-                <label><input type="radio" name="q${index}" value="1" required> 1</label>
-                <label><input type="radio" name="q${index}" value="2"> 2</label>
-                <label><input type="radio" name="q${index}" value="3"> 3</label>
-                <label><input type="radio" name="q${index}" value="4"> 4</label>
-                <label><input type="radio" name="q${index}" value="5"> 5</label>
-            `;
-            questionsContainer.appendChild(questionEl);
+            responses[q.category] = responses[q.category] || [];
+            responses[q.category].push(parseInt(document.querySelector(`input[name="q${index}"]:checked`).value));
         });
 
-        document.getElementById('surveyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const responses = {};
-            questions.forEach((q, index) => {
-                responses[q.category] = responses[q.category] || [];
-                responses[q.category].push(parseInt(document.querySelector(`input[name="q${index}"]:checked`).value));
-            });
+        const results = {};
+        for (const category in responses) {
+            const sum = responses[category].reduce((a, b) => a + b, 0);
+            results[category.toLowerCase().replace(/ /g, '')] = ((sum / (responses[category].length * 5)) * 100).toFixed(2);
+        }
 
-            const results = {};
-            for (const category in responses) {
-                const sum = responses[category].reduce((a, b) => a + b, 0);
-                results[category.toLowerCase().replace(/ /g, '')] = ((sum / (responses[category].length * 5)) * 100).toFixed(2);
-            }
+        const userData = {
+            name: localStorage.getItem('name'),
+            email: localStorage.getItem('email'),
+            ...results
+        };
 
-            const userData = {
-                name: localStorage.getItem('name'),
-                email: localStorage.getItem('email'),
-                ...results
-            };
-
-            fetch('https://script.google.com/macros/s/AKfycbz8bKrhVIToCc-HvPuh7PMjJe0mZRX_gs0AbVhpAMk5EbXbeSwqlFkdRc2OMZaqmZ6yxA/exec', {
-                method: 'POST',
-                body: JSON.stringify(userData)
-            }).then(response => response.json())
-              .then(data => {
-                  alert('Survey submitted successfully!');
-                  window.location.href = 'personality.html';
-              })
-              .catch(error => console.error('Error submitting survey:', error));
-        });
-    </script>
-</body>
-</html>
+        fetch('https://script.google.com/macros/s/AKfycbz8bKrhVIToCc-HvPuh7PMjJe0mZRX_gs0AbVhpAMk5EbXbeSwqlFkdRc2OMZaqmZ6yxA/exec', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        }).then(response => response.json())
+          .then(data => {
+              alert('Survey submitted successfully!');
+              window.location.href = 'personality.html';
+          })
+          .catch(error => console.error('Error submitting survey:', error));
+    });
+</script>
